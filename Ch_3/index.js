@@ -31,6 +31,7 @@ app.set('views', './views')
 //Регистрируем публичную папку
 app.use(EXPRESS.static('public'))
 
+app.use(EXPRESS.urlencoded({extended: true}))
 app.use('/', homeRout)
 app.use('/add', addRout)
 app.use('/courses', CoursesRout)
