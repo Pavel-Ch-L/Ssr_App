@@ -2,6 +2,7 @@ const EXPRESS = require('express')
 const PATH = require('path')
 const EXPHBS = require('express-handlebars')
 const homeRout = require('./Routs/Home')
+const cardRout = require('./Routs/card')
 const addRout = require('./Routs/Add')
 const CoursesRout = require('./Routs/Courses')
 
@@ -35,6 +36,7 @@ app.use(EXPRESS.urlencoded({extended: true}))
 app.use('/', homeRout)
 app.use('/add', addRout)
 app.use('/courses', CoursesRout)
+app.use('/card', cardRout)
 
 
 
