@@ -30,7 +30,7 @@ app.set('view engine', 'HBS')
 //Название папки шаблонов (по умолчанию views)
 app.set('views', './views')
 //Регистрируем публичную папку
-app.use(EXPRESS.static('public'))
+app.use(EXPRESS.static(PATH.join(__dirname, 'public')))
 
 app.use(EXPRESS.urlencoded({extended: true}))
 app.use('/', homeRout)

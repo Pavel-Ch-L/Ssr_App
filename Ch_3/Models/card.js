@@ -12,6 +12,7 @@ class Card {
 
     const idx = card.courses.findIndex(c => c.id === course.id)
     const candidate = card.courses[idx]
+
     if(candidate) {
       //курс уже есть
       candidate.count++
@@ -21,13 +22,40 @@ class Card {
       course.count = 1
       card.courses.push(course)
     }
+
     card.price += +course.price
+
     return new Promise((res, rej) => {
       fs.writeFile(p, JSON.stringify(card), err => {
         if(err) {
           rej(err)
         } else {
           res()
+        }
+      })
+    })
+  }
+
+  static async remove(id) {
+    const card = await Card.fetch()
+
+    const idx = card.courses.findIndex(c => c.id === id)
+    const course = card.courses[idx]
+
+    if (course.count === 1) {
+      card.courses = card.courses.filter(c => c.id !== id)
+    } else {
+      card.courses[idx].count--
+    }
+
+    card.price -= course.price
+
+    return new Promise((res, rej) => {
+      fs.writeFile(p, JSON.stringify(card), err => {
+        if(err) {
+          rej(err)
+        } else {
+          res(card)
         }
       })
     })
