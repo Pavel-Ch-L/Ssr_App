@@ -1,5 +1,7 @@
+const private = require('./private')
 const express = require('express')
 const path = require('path')
+const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
@@ -27,6 +29,17 @@ app.use('/card', cardRoutes)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
-})
+async function start() {
+  try {
+    const url = private.mongoUrlOld
+    await mongoose.connect(url, {useNewUrlParser: true})
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`)
+    })
+  } catch (e) {
+    console.log(`Mangoose connect error: ${e}`);
+  }
+}
+
+start()
+
