@@ -7,6 +7,7 @@ const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
 const addRoutes = require('./routes/add')
 const coursesRoutes = require('./routes/courses')
+const User = require('./models/user')
 
 const app = express()
 
@@ -18,6 +19,16 @@ const hbs = exphbs.create({
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
+
+app.use(async (req, res, next) => {
+  try {
+    const user = await User.findById('626e94c0d0e1b3f5e039733a')
+    req.user = user
+    next()
+  } catch (e) {
+    console.log(e);
+  }
+})
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
@@ -31,8 +42,17 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    const url = private.mongoUrlOld
+    const url = private.mongoUrl
     await mongoose.connect(url, {useNewUrlParser: true})
+    const candidate = await User.findOne()
+    if(!candidate) {
+      const user = new User({
+        email: 'pavel@mail.ru',
+        name: 'Pavel',
+        cart: {items: []}
+      })
+      await user.save()
+    }
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
     })
