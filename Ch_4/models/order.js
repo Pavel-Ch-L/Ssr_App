@@ -26,3 +26,5 @@ const orderSchema = new Schema({
     default: Date.now
   }
 })
+
+module.exports = model('Order', orderSchema)

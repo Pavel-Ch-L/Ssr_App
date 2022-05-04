@@ -61,4 +61,9 @@ userSchema.methods.addToCart = function(course) {
    return this.save()
  }
 
+ userSchema.methods.clearCart = function() {
+   this.cart = {items: []}
+   return this.save()
+ }
+
 module.exports = model('User', userSchema)
