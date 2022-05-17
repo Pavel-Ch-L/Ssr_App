@@ -24,6 +24,7 @@ app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
+/* 
 app.use(async (req, res, next) => {
   try {
     const user = await User.findById('626e94c0d0e1b3f5e039733a')
@@ -33,11 +34,12 @@ app.use(async (req, res, next) => {
     console.log(e);
   }
 })
+ */
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-  secret: 'some secret value',
+  secret: private.secret,
   resave: false,
   saveUninitialized: false
 }))
@@ -56,7 +58,7 @@ async function start() {
   try {
     const url = private.mongoUrl
     await mongoose.connect(url, {useNewUrlParser: true})
-    const candidate = await User.findOne()
+    /* const candidate = await User.findOne()
     if(!candidate) {
       const user = new User({
         email: 'pavel@mail.ru',
@@ -64,7 +66,7 @@ async function start() {
         cart: {items: []}
       })
       await user.save()
-    }
+    } */
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
     })
