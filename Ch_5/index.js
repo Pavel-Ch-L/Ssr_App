@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const session = require('express-session')
+const MongoStore = require('connect-mongodb-session')(session)
 const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
 const addRoutes = require('./routes/add')
@@ -13,11 +14,18 @@ const User = require('./models/user')
 const authRoutes = require('./routes/auth')
 const varMiddleware = require('./middleware/variables')
 
+const mongoUri = private.mongoUrl
+
 const app = express()
 
 const hbs = exphbs.create({
   defaultLayout: 'main',
   extname: 'hbs'
+})
+
+const store = new MongoStore({
+  collection: 'sessions',
+  uri: mongoUri
 })
 
 app.engine('hbs', hbs.engine)
@@ -41,7 +49,8 @@ app.use(express.urlencoded({extended: true}))
 app.use(session({
   secret: private.secret,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: store
 }))
 app.use(varMiddleware)
 
@@ -56,8 +65,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    const url = private.mongoUrl
-    await mongoose.connect(url, {useNewUrlParser: true})
+    await mongoose.connect(mongoUri, {useNewUrlParser: true})
     /* const candidate = await User.findOne()
     if(!candidate) {
       const user = new User({
