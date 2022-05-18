@@ -16,13 +16,29 @@ router.get('/logout', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-  const user = await User.findById('626e94c0d0e1b3f5e039733a')
-  req.session.user = user
-  req.session.isAuthenticate = true
-  req.session.save(err => {
-    if(err) throw err
-    res.redirect('/')
-  })
+  try {
+    const {email, password} = req.body
+
+    const candidate = await User.findOne({ email })
+    if (candidate) {
+      const areSame = password === candidate.password
+      if (areSame) {
+        req.session.user = candidate
+        req.session.isAuthenticate = true
+        req.session.save(err => {
+          if(err) throw err
+          res.redirect('/')
+        })
+      } else {
+        res.redirect('/auth/login#/login')
+      }
+    } else {
+      res.redirect('/auth/login#/login')
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  
 })
 
 router.post('/register', async (req, res) => {
