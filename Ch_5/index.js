@@ -13,6 +13,7 @@ const ordersRoutes = require('./routes/orders')
 const User = require('./models/user')
 const authRoutes = require('./routes/auth')
 const varMiddleware = require('./middleware/variables')
+const userMiddleware = require('./middleware/user')
 
 const mongoUri = private.mongoUrl
 
@@ -53,6 +54,7 @@ app.use(session({
   store: store
 }))
 app.use(varMiddleware)
+app.use(userMiddleware)
 
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
@@ -66,15 +68,6 @@ const PORT = process.env.PORT || 3000
 async function start() {
   try {
     await mongoose.connect(mongoUri, {useNewUrlParser: true})
-    /* const candidate = await User.findOne()
-    if(!candidate) {
-      const user = new User({
-        email: 'pavel@mail.ru',
-        name: 'Pavel',
-        cart: {items: []}
-      })
-      await user.save()
-    } */
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
     })
