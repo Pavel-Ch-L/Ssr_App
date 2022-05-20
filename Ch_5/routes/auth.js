@@ -6,7 +6,9 @@ const router = Router()
 router.get('/login', async (req, res) => {
   res.render('auth/login', {
     title: 'Аваторизация',
-    isLogin: true
+    isLogin: true,
+    loginError: req.flash('loginError'),
+    registerError: req.flash('registerError')
   })
 })
 
@@ -31,9 +33,11 @@ router.post('/login', async (req, res) => {
           res.redirect('/')
         })
       } else {
+        req.flash('loginError', 'Неврный пароль')
         res.redirect('/auth/login#/login')
       }
     } else {
+      req.flash('loginError', 'Такой пользователь не найден')
       res.redirect('/auth/login#/login')
     }
   } catch (error) {
@@ -47,14 +51,15 @@ router.post('/register', async (req, res) => {
     const {email, password, repeat, name} = req.body
     const candidate = await User.findOne({email})
     if (candidate) {
-      res.redirect('/auth/login#/register')
+      req.flash('registerError', 'Такой email уже занят')
+      res.redirect('/auth/login#register')
     } else {
       const hashPassword = await bcrypt.hash(password, 10)
       const user = new User({
         email, name, password: hashPassword, cart:{items: []}
       })
       await user.save()
-      res.redirect('/auth/login#/login')
+      res.redirect('/auth/login#login')
     }
   } catch (e) {
     console.log(e);
