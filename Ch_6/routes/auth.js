@@ -62,7 +62,7 @@ router.post('/register', async (req, res) => {
       })
       await user.save()
       res.redirect('/auth/login#login')
-      await mailTransport(email)
+      await mailTransport(email, name)
     }
   } catch (e) {
     console.log(e);
