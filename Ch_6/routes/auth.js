@@ -2,6 +2,8 @@ const {Router} = require('express')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const router = Router()
+const private = require('../keys')
+const mailTransport = require('../emails/mailTranspot')
 
 router.get('/login', async (req, res) => {
   res.render('auth/login', {
@@ -60,6 +62,7 @@ router.post('/register', async (req, res) => {
       })
       await user.save()
       res.redirect('/auth/login#login')
+      await mailTransport(email)
     }
   } catch (e) {
     console.log(e);
