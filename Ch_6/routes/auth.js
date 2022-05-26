@@ -72,11 +72,36 @@ router.post('/register', async (req, res) => {
   }
 })
 
-router.get('/reset', async (req, res) => {
+router.get('/reset', (req, res) => {
   res.render('auth/reset', {
     title: 'Забыли пароль',
     error: req.flash('error')
   })
+})
+
+router.get('/password:token', async (req, res) => {
+  if (!req.params.token) {
+    return res.redirect('/auth/login')
+  }
+
+  try {
+    const user = await User.findOne({
+    resetToken: req.params.token,
+    resetTokenExp: {$gt: Date.now()}
+    })
+    if(!user) {
+      return res.redirect('/auth/login')
+    } else {
+      res.render('auth/password', {
+        title: 'Восстановить доступ',
+        error: req.flash('error'),
+        userId: user._id.toString(),
+        token: req.params.token
+      })
+    }
+  } catch (error) {
+    console.log(error);
+  }
 })
 
 router.post('/reset', (req, res) => {
