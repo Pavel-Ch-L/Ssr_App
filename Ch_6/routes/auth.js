@@ -1,9 +1,12 @@
 const {Router} = require('express')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
 const router = Router()
 const private = require('../keys')
 const mailTransport = require('../emails/mailTranspot')
+const regEmail = require('../emails/registration')
+const resetEmail = require('../emails/reset')
 
 router.get('/login', async (req, res) => {
   res.render('auth/login', {
@@ -62,10 +65,42 @@ router.post('/register', async (req, res) => {
       })
       await user.save()
       res.redirect('/auth/login#login')
-      await mailTransport(email, name)
+      await mailTransport(regEmail(email, name))
     }
   } catch (e) {
     console.log(e);
+  }
+})
+
+router.get('/reset', async (req, res) => {
+  res.render('auth/reset', {
+    title: 'Забыли пароль',
+    error: req.flash('error')
+  })
+})
+
+router.post('/reset', (req, res) => {
+  try {
+    crypto.randomBytes(32, async (err, buffer) => {
+      if (err) {
+        req.flash('error', 'Что-то пошло не так, повторите попытку позже')
+        return res.redirect('/auth/reset')
+      }
+      const token = buffer.toString('hex')
+      const candidate = await User.findOne({email: req.body.email})
+      if (candidate) {
+        candidate.resetToken = token,
+        candidate.resetTokenExp = Date.now() + 60 * 60 * 1000
+        await candidate.save()
+        await mailTransport( resetEmail(candidate.email, candidate.name, token) )
+        res.redirect('/auth/login')
+      } else {
+        req.flash('error', 'Такого email нет')
+        res.redirect('/auth/reset')
+      }
+    })
+  } catch (error) {
+    console.log(error);
   }
 })
 
