@@ -10,7 +10,7 @@ const resetEmail = require('../emails/reset')
 
 router.get('/login', async (req, res) => {
   res.render('auth/login', {
-    title: 'Аваторизация',
+    title: 'Авторизация',
     isLogin: true,
     loginError: req.flash('loginError'),
     registerError: req.flash('registerError')
@@ -79,7 +79,7 @@ router.get('/reset', (req, res) => {
   })
 })
 
-router.get('/password:token', async (req, res) => {
+router.get('/password/:token', async (req, res) => {
   if (!req.params.token) {
     return res.redirect('/auth/login')
   }
@@ -90,6 +90,7 @@ router.get('/password:token', async (req, res) => {
     resetTokenExp: {$gt: Date.now()}
     })
     if(!user) {
+      console.log("Ошибка! Пользователь не найден");
       return res.redirect('/auth/login')
     } else {
       res.render('auth/password', {
@@ -124,6 +125,29 @@ router.post('/reset', (req, res) => {
         res.redirect('/auth/reset')
       }
     })
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+router.post('/password', async (req, res) => {
+  try {
+    const user = await User.findOne({
+      _id: req.body.userId,
+      resetToken: req.body.token,
+      resetTokenExp: {$gt: Date.now()}
+    })
+    if (user) {
+      user.password = await bcrypt.hash(req.body.password, 10)
+      user.resetToken = undefined
+      user.resetTokenExp = undefined
+      await user.save()
+      res.redirect('/auth/login')
+    } else {
+      console.log('Ошибка! Время жизни токена истекло')
+      req.flash('loginError', 'Время жизни токена истекло')
+      res.redirect('/auth/login')
+    }
   } catch (error) {
     console.log(error);
   }
