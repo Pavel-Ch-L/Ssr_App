@@ -67,7 +67,7 @@ router.post('/register', registerValidators, async (req, res) => {
       })
       await user.save()
       res.redirect('/auth/login#login')
-      await mailTransport(regEmail(email, name))
+      //await mailTransport(regEmail(email, name))
   } catch (e) {
     console.log(e);
   }
