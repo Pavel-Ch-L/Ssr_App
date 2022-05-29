@@ -1,7 +1,9 @@
 const {Router} = require('express')
+const {validationResult} = require('express-validator')
 const Course = require('../models/course')
 const router = Router()
 const auth = require('../middleware/auth')
+const {courseValidators} = require('../utils/validators')
 
 function isOwner (course, req) {
   return course.userId.toString() === req.user._id.toString()
@@ -41,7 +43,20 @@ router.get('/:id/edit', auth, async (req, res) => {
   }
 })
 
-router.post('/edit', auth, async (req, res) => {
+router.post('/edit', auth, courseValidators, async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).render('add', {
+      title: `Редактировать`,
+      isAdd: true,
+      error: errors.array()[0].msg,
+      data: {
+        title: req.body.title,
+        price: req.body.price,
+        img: req.body.img
+      }
+    })
+  }
   try {
     const {id} = req.body
     delete req.body.id

@@ -8,6 +8,7 @@ const private = require('../keys')
 const mailTransport = require('../emails/mailTranspot')
 const regEmail = require('../emails/registration')
 const {registerValidators} = require('../utils/validators')
+const {loginValidators} = require('../utils/validators')
 const resetEmail = require('../emails/reset')
 
 router.get('/login', async (req, res) => {
@@ -25,9 +26,14 @@ router.get('/logout', async (req, res) => {
   })
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginValidators, async (req, res) => {
   try {
     const {email, password} = req.body
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      req.flash('loginError', errors.array()[0].msg)
+      return res.status(422).redirect('/auth/login#login')
+    }
 
     const candidate = await User.findOne({ email })
     if (candidate) {
@@ -67,7 +73,7 @@ router.post('/register', registerValidators, async (req, res) => {
       })
       await user.save()
       res.redirect('/auth/login#login')
-      //await mailTransport(regEmail(email, name))
+      await mailTransport(regEmail(email, name))
   } catch (e) {
     console.log(e);
   }
