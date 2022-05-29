@@ -2,11 +2,12 @@ const {Router} = require('express')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
-const {body, validationResult} = require('express-validator/check')
+const {validationResult} = require('express-validator')
 const router = Router()
 const private = require('../keys')
 const mailTransport = require('../emails/mailTranspot')
 const regEmail = require('../emails/registration')
+const {registerValidators} = require('../utils/validators')
 const resetEmail = require('../emails/reset')
 
 router.get('/login', async (req, res) => {
@@ -52,7 +53,7 @@ router.post('/login', async (req, res) => {
   
 })
 
-router.post('/register', body('email').isEmail() , async (req, res) => {
+router.post('/register', registerValidators, async (req, res) => {
   try {
     const {email, password, confirm, name} = req.body
     const candidate = await User.findOne({email})
