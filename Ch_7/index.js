@@ -17,6 +17,7 @@ const profileRoutes = require('./routes/profile')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
 const errorHandler = require('./middleware/error')
+const fileMiddleware = require('./middleware/file.js')
 
 const mongoUri = private.mongoUrl
 
@@ -57,8 +58,8 @@ app.use(session({
   saveUninitialized: false,
   store: store
 }))
+app.use(fileMiddleware. single('avatar'))
 app.use( csrf() )
-
 app.use(varMiddleware)
 app.use(userMiddleware)
 app.use( flash() )
