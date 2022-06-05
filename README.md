@@ -23,4 +23,4 @@
 
 [Раздел  8   ----    Практика: Деплой приложения.](https://github.com/Pavel-Ch-L/Ssr_App/tree/master/Ch_8)
 
-&emsp; Приложенеие на хостинге heroku.com --  https://sheltered-brushlands-55391.herokuapp.com/
+&emsp; Приложенеие на хостинге heroku.com --  https://sheltered-brushlands-55391.herokuapp.com/?target=_blank
