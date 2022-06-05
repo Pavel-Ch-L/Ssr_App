@@ -19,4 +19,4 @@ console.log(os.totalmem());
 console.log(os.homedir());
 
 //Время работы системы
-console.log(Math.floor(os.uptime()/1000/60).toFixed(2), 'мин');
+console.log((os.uptime()/60/60).toFixed(2), 'час');
