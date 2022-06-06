@@ -40,7 +40,7 @@ const SERVER = HTTP.createServer((req, res) => {
     })
 
     req.on('data', data => {
-      body.push(Buffer.from(data))
+      body.push(decodeURI(Buffer.from(data)))
     })
     req.on('end', () => {
       const message =  body.toString().split('=')[1]
