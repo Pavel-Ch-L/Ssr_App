@@ -15,8 +15,7 @@ Vs Cod Extension:
 Данные из <input> по умолчанию кодируются в  URL encoded (ФФ = %D0%A4%D0%A4)
 Для исправления <form enctype="text/plain"></form> или  decodeURI()
 
-<form>
-enctype
+<form enctype=" "> </form>
 Когда значение атрибута method равно post, атрибут - MIME тип содержимого,
  которое используется, чтобы передать форму на сервер. 
 Возможные значения:

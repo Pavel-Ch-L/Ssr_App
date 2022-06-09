@@ -31,8 +31,9 @@ app.set('view engine', 'HBS')
 app.set('views', './views')
 //Регистрируем публичную папку
 app.use(EXPRESS.static(PATH.join(__dirname, 'public')))
-
+//Разбор req.body (у каждого <input> д.б. атрибут name)
 app.use(EXPRESS.urlencoded({extended: true}))
+
 app.use('/', homeRout)
 app.use('/add', addRout)
 app.use('/courses', CoursesRout)
